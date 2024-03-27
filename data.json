@@ -1,0 +1,22 @@
+{
+  "posts": [
+    {
+      "id": "bd26",
+      "name": "Rahul ",
+      "email": "sureshsingla976@gmail.com",
+      "password": "7894561232"
+    }
+  ],
+  "comments": [
+    {
+      "id": "1",
+      "body": "Comment 1",
+      "postId": 1
+    },
+    {
+      "id": "2",
+      "body": "Comment 2",
+      "postId": 2
+    }
+  ]
+}
