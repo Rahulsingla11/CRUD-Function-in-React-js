@@ -14,7 +14,7 @@ function Nav() {
           </Link>
           <nav className="md:ml-auto md:mr-auto flex flex-wrap items-center text-base justify-center">
             <Link to="/" className="mr-5 hover:text-gray-900">Details</Link>
-            <Link to="/form" className="mr-5 hover:text-gray-900">Entry</Link>
+            <Link to="/form" className="mr-5 hover:text-gray-900">Sign Up</Link>
           </nav>
           <button className="inline-flex items-center bg-gray-100 border-0 py-1 px-3 focus:outline-none hover:bg-gray-200 rounded text-base mt-4 md:mt-0">  
             <Link to="/login" className="mr-5 hover:text-gray-900">Login</Link> 

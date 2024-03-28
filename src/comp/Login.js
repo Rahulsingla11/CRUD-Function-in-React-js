@@ -1,70 +1,95 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function Login() {
-  const [credentials, setCredentials] = useState({
-    username: '',
-    password: ''
-  });
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [error, setError] = useState('');
 
-  const history = useHistory();
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCredentials({
-      ...credentials,
-      [name]: value
-    });
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/posts');
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Failed to fetch data');
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Here you can implement your login logic
-    // For demo purposes, let's just redirect to home page on login
-    history.push('/');
+    try {
+      const response = await axios.get('http://localhost:3000/posts');
+      const userData = response.data;
+      const user = userData.find(user => user.email === username && user.password === password);
+      if (user) {
+        setIsLoggedIn(true);
+        // alert('Login successful!');
+      } else {
+        setError(alert('User Not Found!'));
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setError('Failed to fetch data');
+    }
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUsername('');
+    setPassword('');
+    // alert('Logged out successfully!');
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="container mx-auto">
+      {isLoggedIn ? (
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+          <h1 className="text-2xl font-bold mb-4">Welcome, {username}!</h1>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" value="true" />
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="username" className="sr-only">Username</label>
-              <input id="username" name="username" type="text" value={credentials.username} onChange={handleChange} autoComplete="username" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Username" />
+      ) : (
+        <div>
+          <h1 className="text-2xl font-bold mb-4">Login</h1>
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          <form onSubmit={handleLogin}>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="email"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input id="password" name="password" type="password" value={credentials.password} onChange={handleChange} autoComplete="current-password" required className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Password" />
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Password:</label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                Forgot your password?
-              </a>
-            </div>
-          </div>
-
-          <div>
-            <button type="submit" className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-              Sign in
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              type="submit"
+            >
+              Login
             </button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
