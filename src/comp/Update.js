@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -11,6 +11,21 @@ function Update() {
     password: ''
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/posts/${postId}`);
+        const postData = response.data;
+        setFormData(postData); // Set form data with existing data
+        console.log('Fetched Post Data:', postData);
+      } catch (error) {
+        console.error('Error fetching post data:', error);
+      }
+    };
+
+    fetchData();
+  }, [postId]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -22,18 +37,11 @@ function Update() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`http://localhost:3000/posts/${postId}`, formData); // Use postId in the URL
-      const postData = response.data;
-      console.log('Posted Data:', postData);
+      await axios.put(`http://localhost:3000/posts/${postId}`, formData); // Use postId in the URL
+      console.log('Data updated successfully');
     } catch (error) {
-      console.error('Error posting data:', error);
+      console.error('Error updating data:', error);
     }
-   
-    setFormData({
-      name: '',
-      email: '',
-      password: ''
-    });
   };
 
   return (
